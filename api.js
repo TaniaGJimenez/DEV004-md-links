@@ -8,6 +8,6 @@ export const existingPath = (path) => fs.existsSync(path);
 export const absPath = (pathUsed) => path.isAbsolute(pathUsed);
 // console.log(absPath('./Pruebas'));
 
-//Convertir la ruta absoluta a ruta relativa
+//Convertir de ruta absoluta a ruta relativa
 export const transformPath = (converted) => path.resolve(converted);
 // console.log(transformPath('./Pruebas'));

@@ -1,17 +1,39 @@
-import { absPath, existingPath } from "./api.js";
+import { absPath, existingPath, transformPath } from "./api.js";
+// export const mdLinks = (path, options) => {
+// const pathExists = existingPath(path);
+//     if(pathExists){
+//         const isPathAbsolute = absPath(path);
+//         console.log(isPathAbsolute, typeof isPathAbsolute)
+//         if (isPathAbsolute) {
+//             console.log('La ruta es absoluta');
+//         } else {
+//             console.log('La ruta es relativa');
+//         }
+//     } else {
+//         console.log('La ruta no existe')
+//     }
+// }
+import fs from 'fs';
+import path from 'path';
 export const mdLinks = (path, options) => {
-    const pathExists = existingPath(path);
-    if(pathExists){
+    return new Promise((resolve, reject) => {
+      const pathExists = existingPath(path);
+      if (pathExists) {
         const isPathAbsolute = absPath(path);
-        console.log(isPathAbsolute, typeof isPathAbsolute)
         if (isPathAbsolute) {
-            console.log('La ruta es absoluta');
+          console.log(`La ruta es absoluta: ${path}`);
+          resolve(path);
         } else {
-            console.log('La ruta es relativa');
+          const relativePath = transformPath(path);
+          console.log(`La ruta es absoluta. Ruta relativa: ${relativePath}`);
+          resolve(relativePath);
         }
-    } else {
-        console.log('La ruta no existe')
-    }
-}
+      } else {
+        reject(`La ruta ${path} no existe`);
+      }
+    });
+  };
 
-console.log (mdLinks('./Pruebas'),typeof mdLinks);//Terminal
+// console.log (typeof mdLinks);//Terminal
+mdLinks('./Pruebas');
+mdLinks('ejemplo.md');

@@ -18,6 +18,7 @@ import path from 'path';
 export const mdLinks = (path, options) => {
     return new Promise((resolve, reject) => {
       const pathExists = existingPath(path);
+      // Si la ruta existe 
       if (pathExists) {
         const isPathAbsolute = absPath(path);
         if (isPathAbsolute) {
@@ -31,9 +32,12 @@ export const mdLinks = (path, options) => {
       } else {
         reject(`La ruta ${path} no existe`);
       }
+    }).catch((error) => {
+        console.error(error);
     });
   };
 
 // console.log (typeof mdLinks);//Terminal
 mdLinks('./Pruebas');
 mdLinks('ejemplo.md');
+mdLinks('./rutaFalsa123');

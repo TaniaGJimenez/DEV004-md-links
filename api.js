@@ -14,10 +14,12 @@ export const absPath = (pathUsed) => path.isAbsolute(pathUsed);
 export const transformPath = (converted) => path.resolve(converted);
 // console.log("Convertir la ruta a relativa", transformPath('./Pruebas'), transformPath('ejemplo.md'));
 
+//TODO:
 //? La ruta es un directorio?
 export const isThisADirectory = (path) => fs.statSync(path).isDirectory();
 // console.log("La ruta es un directorio", isThisADirectory('./Pruebas'), isThisADirectory('ejemplo.md'));
 
+//TODO:
 //? Es un archivo .md
 export const isThisAMDFile = (pathUsed) => path.extname(pathUsed) === ".md";
 // console.log("Es un archivo .md", isThisAMDFile('./Pruebas'), isThisAMDFile('ejemplo.md'));

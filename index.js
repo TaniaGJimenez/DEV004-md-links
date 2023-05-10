@@ -17,8 +17,7 @@ import fs from 'fs';
 import path from 'path';
 export const mdLinks = (path, options) => {
     return new Promise((resolve, reject) => {
-      const pathExists = existingPath(path);
-      // Si la ruta existe 
+      const pathExists = existingPath(path); 
       if (pathExists) {
         const isPathAbsolute = absPath(path);
         if (isPathAbsolute) {

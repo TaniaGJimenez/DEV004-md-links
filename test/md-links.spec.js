@@ -1,15 +1,6 @@
 import { mdLinks } from "../index.js";
 
 describe("mdLinks", () => {
-  it("Entrega una ruta relativa cuando se ingresa una ruta absoluta valida", () => {
-    const relativePath = "ejemplo.md";
-    const expectedRelativePath =
-      "C:\\Users\\Tania G Jimènez\\Documents\\Laboratoria\\Proyecto04\\DEV004-md-links\\ejemplo.md";
-    return mdLinks(relativePath).then((relativePath) => {
-      expect(relativePath).toBe(expectedRelativePath);
-    });
-  });
-
   it("Si la ruta es invalida arroja un mensaje de error", () => {
     const invalidPath = "/ruta/Falsa/123";
     return mdLinks(invalidPath).catch((error) => {
@@ -17,6 +8,15 @@ describe("mdLinks", () => {
     });
   });
 });
+
+  it("Entrega una ruta absoluta cuando se ingresa una ruta relativa valida", () => {
+    const absolutePath = "ejemplo.md";
+    const expectedabsolutePath =
+      "C:\\Users\\Tania G Jimènez\\Documents\\Laboratoria\\Proyecto04\\DEV004-md-links\\ejemplo.md";
+    return mdLinks(absolutePath).then((absolutePath) => {
+      expect(absolutePath).toBe(expectedabsolutePath);
+    });
+  });
 
 //!Test Sergio
 describe("mdLinks", () => {

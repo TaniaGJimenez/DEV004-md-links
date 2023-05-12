@@ -7,12 +7,12 @@ export const existingPath = (path) => fs.existsSync(path);
 
 //? la ruta es absoluta?
 export const absPath = (pathUsed) => path.isAbsolute(pathUsed);
-// console.log("Ruta es absoluta?", absPath('./Pruebas'), absPath('C:\\Users\\Tania G Jimènez\\Documents\\Laboratoria\\Proyecto04\\DEV004-md-links\\Pruebas')
+// console.log("Ruta es absoluta?", absPath('./Pruebas'), absPath('ejemplo.md')
 // );
 
-//? Convertir de ruta absoluta a ruta relativa
+//? Convertir de ruta relativa
 export const transformPath = (converted) => path.resolve(converted);
-// console.log("Convertir la ruta a relativa", transformPath('./Pruebas'), transformPath('ejemplo.md'));
+// console.log(('./Pruebas'), transformPath('ejemplo.md'));
 
 //TODO:
 //? La ruta es un directorio?

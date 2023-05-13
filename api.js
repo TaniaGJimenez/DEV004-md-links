@@ -12,7 +12,7 @@ export const absPath = (pathUsed) => path.isAbsolute(pathUsed);
 
 //? Convertir de ruta relativa
 export const transformPath = (converted) => path.resolve(converted);
-// console.log(('./Pruebas'), transformPath('ejemplo.md'));
+// console.log(transformPath('./Pruebas'), transformPath('ejemplo.md'));
 
 //TODO:
 //? La ruta es un directorio?

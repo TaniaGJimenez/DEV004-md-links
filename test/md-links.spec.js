@@ -1,4 +1,29 @@
 import { mdLinks } from "../index.js";
+//Test Coach Sergio
+describe("mdLinks", () => {
+  it("mdLinks procesa un solo archivo con 3 links", () => {
+    const ruta = "ejemplo.md";
+    return mdLinks(ruta, { validate: false }).then((array) => {
+      expect(array).toEqual([
+        {
+          href: "https://es.wikipedia.org/wiki/Markdown",
+          text: "Markdown",
+          file: "ejemplo.md",
+        },
+        {
+          href: "https://nodejs.org/",
+          text: "Node.js",
+          file: "ejemplo.md",
+        },
+        {
+          href: "https://developers.google.com/v8/",
+          text: "motor de JavaScript V8 de Chrome",
+          file: "ejemplo.md",
+        },
+      ]);
+    });
+  });
+});
 
 describe("mdLinks", () => {
   it("Si la ruta es invalida arroja un mensaje de error", () => {
@@ -16,28 +41,5 @@ it("Entrega una ruta absoluta cuando se ingresa una ruta relativa valida", () =>
   });
 });
 });
-//!Test Sergio
-// describe("mdLinks", () => {
-//   it("mdLinks procesa un solo archivo con 3 links", () => {
-//     const ruta = "ejemplo.md";
-//     return mdLinks(ruta, { validate: false }).then((array) => {
-//       expect(array).toEqual([
-//         {
-//           href: "https://es.wikipedia.org/wiki/Markdown",
-//           text: "Markdown",
-//           file: "ejemplo.md",
-//         },
-//         {
-//           href: "https://nodejs.org/",
-//           text: "Node.js",
-//           file: "ejemplo.md",
-//         },
-//         {
-//           href: "https://developers.google.com/v8/",
-//           text: "motor de JavaScript V8 de Chrome",
-//           file: "ejemplo.md",
-//         },
-//       ]);
-//     });
-//   });
-// });
+//!Test Coach Sergio
+

@@ -1,164 +1,25 @@
-import { default as chalk } from 'chalk';
+import chalk from "chalk";
 import {
   absPath,
   existingPath,
   transformPath,
   isThisADirectory,
   isThisAMDFile,
-  listDirectoryFiles,
-  analyzeMdFilesArray,
+  extractMDFilesFromDirectory,
+  gatherAllLinks,
   getStatsResult,
   getHttpResponse,
-  getResultValidateStats
+  getResultValidateStats,
 } from "./api.js";
-
-//!ESTA ES LA QUE SIRVE (DEMO)
-// export const mdLinks = (path, options) => {
-//   return new Promise((resolve) => {
-//     if (!existingPath(path)) {
-//       console.log("La ruta no existe");
-//       resolve();
-//       return;
-//     }
-
-//     console.log("Ruta válida:", path);
-
-//     let resolvedPath = path;
-
-//     if (!absPath(path)) {
-//       resolvedPath = transformPath(path);
-//       // console.log("Ruta convertida a absoluta:", resolvedPath);
-//     }
-
-//     const mdFiles = [];
-
-//     if (isThisADirectory(resolvedPath)) {
-//       const files = listDirectoryFiles(resolvedPath);
-//       mdFiles.push(...files.filter((file) => isThisAMDFile(file)));
-
-//       if (mdFiles.length === 0) {
-//         console.log("No se encontraron archivos .md en el directorio.");
-//       } else {
-//         // console.log("Archivos .md encontrados:", mdFiles);
-//       }
-//     } else {
-//       if (isThisAMDFile(resolvedPath)) {
-//         mdFiles.push(resolvedPath);
-//         console.log("Es un archivo .md");
-//       } else {
-//         console.log("No es un archivo .md");
-//       }
-//     }
-
-//     // Aquí puedes hacer lo que necesites con el array de archivos .md (mdFiles)
-//     if (options.validate === true && options.stats === false) {
-//       const linkPromises = mdFiles.map((filePath) => {
-//         return extractLinksFromMDFile(filePath)
-//           .then((links) => {
-//             return getHttpResponse(links);
-//           })
-//           .then((result) => {
-//             console.log(result);
-//             return result;
-//           })
-//           .catch((error) => {
-//             console.error(error);
-//             return [];
-//           });
-//       });
-
-//       Promise.all(linkPromises)
-//         .then(() => {
-//           resolve(mdFiles);
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//         });
-//     } else if (options.validate === false && options.stats === true) {
-//       const linkPromises = mdFiles.map((filePath) => {
-//         return extractLinksFromMDFile(filePath)
-//           .then((links) => {
-//             return links; // Retornar los links sin procesar
-//           })
-//           .catch((error) => {
-//             console.error(error);
-//             return []; // En caso de error, retornar un array vacío
-//           });
-//       });
-
-//       Promise.all(linkPromises)
-//         .then((results) => {
-//           const allLinks = results.flat(); // Concatenar los links en un solo array
-//           const statsResult = getStatsResult(allLinks);
-//           console.log(statsResult);
-//           return statsResult;
-//         })
-//         .then(() => {
-//           resolve(mdFiles);
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//         });
-//     } else if (options.validate === true && options.stats === true) {
-//       const linkPromises = mdFiles.map((filePath) => {
-//         return extractLinksFromMDFile(filePath)
-//           .then((links) => {
-//             return getHttpResponse(links).then((response) => {
-//               return getResultValidateStats(response);
-//             });
-//           })
-//           .then((result) => {
-//             console.log(result);
-//             return result;
-//           })
-//           .catch((error) => {
-//             console.error(error);
-//             return [];
-//           });
-//       });
-
-//       Promise.all(linkPromises)
-//         .then(() => {
-//           resolve(mdFiles);
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//         });
-//     } else {
-//       const linkPromises = mdFiles.map((filePath) => {
-//         return extractLinksFromMDFile(filePath)
-//           .then((links) => {
-//             console.log(links);
-//             return links;
-//           })
-//           .catch((error) => {
-//             console.error(error);
-//             return [];
-//           });
-//       });
-
-//       Promise.all(linkPromises)
-//         .then(() => {
-//           resolve(mdFiles);
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//         });
-//     }
-//   });
-// };
-
-//! ESTA ES LA MODIFICACION
 export const mdLinks = (path, options) => {
   return new Promise((resolve) => {
-    let mdFilesArray = [];
-
     if (existingPath(path)) {
       console.log("Ruta válida:", path);
       const resolvedPath = absPath(path) ? path : transformPath(path);
-      
+
+      let mdFilesArray = [];
       if (isThisADirectory(resolvedPath)) {
-        mdFilesArray = listDirectoryFiles(resolvedPath).filter(isThisAMDFile);
+        mdFilesArray = extractMDFilesFromDirectory(resolvedPath);
         if (mdFilesArray.length === 0) {
           console.log("No se encontraron archivos .md en el directorio.");
         }
@@ -172,71 +33,129 @@ export const mdLinks = (path, options) => {
       }
 
       if (options.validate === true && options.stats === true) {
-        analyzeMdFilesArray(mdFilesArray)
-          .then((result) => {
-            getHttpResponse(result)
-              .then((result) => {
-                const resultValidateAndStats = getResultValidateStats(result);
-                console.log(chalk.bgGreen.bold("Ingresando --validate y --stats"));
-                console.log(resultValidateAndStats);
-                resolve(resultValidateAndStats);
-              });
+        gatherAllLinks(mdFilesArray).then((result) => {
+          getHttpResponse(result).then((result) => {
+            const resultValidateAndStats = getResultValidateStats(result);
+            console.log(chalk.bgGreen.bold("Ingresando --validate y --stats"));
+            console.log("-------------------------------");
+            console.log(
+              chalk.bgHex("#808080").bold(" Total: "),
+              chalk.yellow(resultValidateAndStats.Total)
+            );
+            console.log(
+              chalk.bgHex("#808080").bold(" Unique: "),
+              chalk.yellow(resultValidateAndStats.Unique)
+            );
+            console.log(
+              chalk.bgHex("#808080").bold(" Broken: "),
+              chalk.yellow(resultValidateAndStats.Broken)
+            );
+            resolve(resultValidateAndStats);
           });
-
+        });
       } else if (options.validate === true && options.stats === false) {
-        analyzeMdFilesArray(mdFilesArray)
-          .then((result) => {
-            getHttpResponse(result)
-              .then((result) => {
-                const validateLink = result;
-                resolve(validateLink);
-                console.log(chalk.bgGreen.bold("Ingresando --validate"));
-                console.log(validateLink);
+        gatherAllLinks(mdFilesArray).then((result) => {
+          getHttpResponse(result)
+            .then((validateLink) => {
+              console.log(chalk.bgGreen.bold("Ingresando --validate"));
+              console.log("----------------------");
+              validateLink.forEach((link) => {
+                console.log(
+                  chalk.bgMagenta.bold(" text "),
+                  chalk.magenta(link.text)
+                );
+                console.log(
+                  chalk.bgGreen.bold(" href "),
+                  chalk.green(chalk.underline(link.href))
+                );
+                console.log(chalk.bgBlue.bold(" file "), chalk.blue(link.file));
+                console.log(
+                  chalk.bgYellow.bold(" status "),
+                  chalk.yellow(link.status)
+                );
+                if (link.ok === "Ok") {
+                  console.log(
+                    chalk.bgHex("#808080").bold(" ok "),
+                    chalk.greenBright(link.ok)
+                  );
+                } else {
+                  console.log(
+                    chalk.bgHex("#808080").bold(" ok "),
+                    chalk.redBright(link.ok)
+                  );
+                }
+                console.log();
               });
-          });
-
+              resolve(validateLink);
+            })
+            .catch((error) => {
+              console.error(chalk.red("Error:", error));
+              reject(error);
+            });
+        });
       } else if (options.stats === true && options.validate === false) {
-        analyzeMdFilesArray(mdFilesArray)
-          .then((result) => {
-            const valueStats = getStatsResult(result);
-            console.log(chalk.bgGreen.bold("Ingresando --stats"));
-            console.log(valueStats);
-            resolve(valueStats);
-          });
-
+        gatherAllLinks(mdFilesArray).then((result) => {
+          const valueStats = getStatsResult(result);
+          console.log(chalk.bgGreen.bold("Ingresando --stats"));
+          console.log("------------------");
+          console.log(
+            chalk.bgHex("#808080").bold(" Total: "),
+            chalk.yellow(valueStats.Total)
+          );
+          console.log(
+            chalk.bgHex("#808080").bold(" Unique: "),
+            chalk.yellow(valueStats.Unique)
+          );
+          resolve(valueStats);
+        });
       } else {
-        analyzeMdFilesArray(mdFilesArray)
-          .then((result) => {
-            const noOptions = result;
-            resolve(noOptions);
-            console.log(chalk.bgGreen.bold("Sin --validate, sin --stats"));
-            console.log(noOptions);
+        gatherAllLinks(mdFilesArray).then((result) => {
+          const noOptions = result;
+          console.log(chalk.bgGreen.bold("Sin --validate, sin --stats"));
+          console.log("-----------------------------");
+          noOptions.forEach((link) => {
+            console.log(
+              chalk.bgHex("#808080").bold(" text "),
+              chalk.hex("#C0C0C0")(link.text)
+            );
+            console.log(
+              chalk.bgHex("#808080").bold(" href "),
+              chalk.hex("#FFFFFF")(chalk.underline(link.href))
+            );
+            console.log(
+              chalk.bgHex("#808080").bold(" file "),
+              chalk.hex("#AAAAAA")(link.file)
+            );
+            console.log();
           });
+          resolve(noOptions);
+        });
       }
     } else {
       console.log(chalk.bgRed.bold("La ruta no existe"));
+      // reject(new Error("La ruta no existe"));
     }
   });
 };
 
-// mdLinks("./Pruebas", { validate: true, stats: false })
-//   .then(() => {
-//   })
-//   .catch((error) => {
-//     console.error('La función mdLinks ha encontrado un error:', error);
-//   });
+// Pruebas
+// // mdLinks("./Pruebas", { validate: true, stats: false })
+// //   .then(() => {
+// //   })
+// //   .catch((error) => {
+// //     console.error('La función mdLinks ha encontrado un error:', error);
+// //   });
 
-// mdLinks("./Pruebas", { validate: false, stats: true })
-//   .then(() => {
-//   })
-//   .catch((error) => {
-//     console.error('La función mdLinks ha encontrado un error:', error);
-//   });
+// // mdLinks("./Pruebas", { validate: false, stats: true })
+// //   .then(() => {
+// //   })
+// //   .catch((error) => {
+// //     console.error('La función mdLinks ha encontrado un error:', error);
+// //   });
 
-//   mdLinks("./Pruebas", { validate: true, stats: true })
-//   .then(() => {
-//   })
-//   .catch((error) => {
-//     console.error('La función mdLinks ha encontrado un error:', error);
-//   });  
-
+// //   mdLinks("./Pruebas", { validate: true, stats: true })
+// //   .then(() => {
+// //   })
+// //   .catch((error) => {
+// //     console.error('La función mdLinks ha encontrado un error:', error);
+// //   });

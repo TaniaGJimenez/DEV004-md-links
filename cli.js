@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
+
 import { mdLinks } from "./index.js";
 import chalk from "chalk";
-import process from "process";
+import process from "node:process";
 
 const path = process.argv[2];
 const option1 = process.argv[3];

@@ -29,7 +29,6 @@ const listDirectoryFiles = (directoryPath) => {
       const stat = fs.statSync(itemPath);
 
       if (stat.isDirectory()) {
-        // Llamada recursiva si es un directorio
         readDirectory(itemPath);
       } else {
         files.push(itemPath);
@@ -49,7 +48,7 @@ export const extractMDFilesFromDirectory = (directoryPath) => {
 };
 // console.log(extractMDFilesFromDirectory("./Pruebas"));
 
-//! Función que solo busca coincidencias con regex
+//? ! Función que solo busca coincidencias con regex
 const findMatches = (content, filePath) => {
   const regex = /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
 
@@ -70,7 +69,7 @@ const findMatches = (content, filePath) => {
   return links;
 };
 
-//! Esta función lee un archivo .md y usa findMatches para extraer los links
+//? ! Esta función lee un archivo .md y usa findMatches para extraer los links
 const readAndFindLinks = (filePath) => {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, "utf-8", (err, content) => {
@@ -84,14 +83,8 @@ const readAndFindLinks = (filePath) => {
     });
   });
 };
-// readAndFindLinks("ejemplo.md")
-//   .then((links) => {
-//     console.log("Enlaces encontrados:", links);
-//   })
-//   .catch((error) => {
-//     console.error("Error:", error);
-//   });
-//!Itera readAndFindLinks y junta todos los links en un array
+
+//? !Itera readAndFindLinks y junta todos los links en un array
 export const gatherAllLinks = (mdFilesArray) => {
   const results = [];
 
@@ -114,13 +107,7 @@ export const gatherAllLinks = (mdFilesArray) => {
     });
   });
 };
-// gatherAllLinks(mdFilesArray)
-//   .then((links) => {
-//     console.log('Enlaces encontrados:', links);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//   });
+
 //! A partir de aqui comienza comienzan funciones --validate, -stats, --validate y --stats
 //? Hace la petición HTTP con Axios
 export const getHttpResponse = (linksFromArray) => {
@@ -212,3 +199,21 @@ export const getResultValidateStats = (arrayObject) => {
 // // const getFileName = (filePath) => {
 // //   return path.basename(filePath);
 // // };
+
+// Pruebas readAndFindLinks
+// readAndFindLinks("ejemplo.md")
+//   .then((links) => {
+//     console.log("Enlaces encontrados:", links);
+//   })
+//   .catch((error) => {
+//     console.error("Error:", error);
+//   });
+
+// Pruebas gatherAllLinks
+// gatherAllLinks(mdFilesArray)
+//   .then((links) => {
+//     console.log('Enlaces encontrados:', links);
+//   })
+//   .catch((error) => {
+//     console.error('Error:', error);
+//   });

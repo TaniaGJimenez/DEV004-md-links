@@ -1,6 +1,7 @@
 import { mdLinks } from "../index.js";
 
-describe("mdLinks", () => {
+  describe("mdLinks", () => {
+  
   it("Cuando se ingresa un archivo sin --validate ni --stats", () => {
     const path = "ejemplo.md";
     const options = {};
@@ -123,24 +124,23 @@ describe("mdLinks", () => {
       });
     });
   });
-  let consoleLogSpy;
 
-  beforeEach(() => {
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+  it('Cuando se ingresa una ruta que no existe', () => {
+    const path = './rutafalsa123';
+    const options = {};
+  
+    return new Promise((resolve) => {
+      mdLinks(path, options)
+        .then(() => {
+          throw new Error('La promesa debería haber sido rechazada');
+        })
+        .catch((error) => {
+          expect(error.message).toBe("La ruta no existe");
+          resolve();
+        });
+    });
   });
 
-  afterEach(() => {
-    consoleLogSpy.mockRestore();
-  });
-
-  // it('Cuando se ingresa una ruta no existente', () => {
-  //   const path = '/ruta/no/existente';
-  //   const options = {};
-  
-  //   return mdLinks(path, options).catch((error) => {
-  //     expect(error.message).toBe("La ruta no existe");
-  //   });
-  // });
-  
 });
+
 
